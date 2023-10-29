@@ -7,21 +7,23 @@ def calculate_line_sum(line):
 def calculate_column_sum(column_index, matrix):
     column_sum = 0
     for line in matrix:
-        column_sum += line[column_index]
+        if column_index < len(line):
+            column_sum += line[column_index]
     return column_sum
 
 if __name__ == "__main__":
-    matrix_size = int(sys.argv[1])
-    matrix_values = list(map(int, sys.argv[2:]))
-    if len(matrix_values) != matrix_size * matrix_size:
+    matrix_line = int(sys.argv[1])
+    matrix_column = int(sys.argv[2])
+    matrix_values = list(map(int, sys.argv[3:]))
+    if len(matrix_values) != matrix_line * matrix_column:
         print("Неверное количество значений.")
         sys.exit(1)
     
-    matrix = [matrix_values[i:i + matrix_size] for i in range(0, len(matrix_values), matrix_size)]
+    matrix = [matrix_values[i:i + matrix_column] for i in range(0, len(matrix_values), matrix_column)]
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         line_sums = list(executor.map(calculate_line_sum, matrix))
-        column_sums = list(executor.map(calculate_column_sum, range(matrix_size), [matrix]*matrix_size))
+        column_sums = list(executor.map(calculate_column_sum, range(matrix_column), [matrix]*matrix_column))
 
     total_sum = sum(line_sums)
 
